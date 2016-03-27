@@ -82,7 +82,12 @@ namespace M101DotNet.WebApp.Controllers
             }
 
             var blogContext = new BlogContext();
-            await blogContext.CreateNewUserAsync(UserFromRegisterModel(model));
+
+            var newUser = UserFromRegisterModel(model);
+
+            await blogContext.CreateNewUserAsync(newUser);
+
+            //TODO : show error message if user with such email already exist in a system
 
             return RedirectToAction("Index", "Home");
         }
