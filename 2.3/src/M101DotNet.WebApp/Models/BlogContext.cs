@@ -40,12 +40,17 @@ namespace M101DotNet.WebApp.Models
             get { return _database.GetCollection<User>(USERS_COLLECTION_NAME); }
         }
 
-        public User FindUserByEmail(string userEmail)
+        public async Task<User> FindUserByEmailAsync(string userEmail)
         {
-            return (User)Users.Find(x => x.Email == userEmail).Limit(1);
+            var builder = Builders<User>.Filter;
+
+            var filter = builder.Eq(x => x.Email, userEmail);
+
+            var result = await Users.Find(filter).Limit(1).FirstOrDefaultAsync();
+            return result;
         }
 
-        public async Task CreateNewUser(User user)
+        public async Task CreateNewUserAsync(User user)
         {
             if(await Users.CountAsync(x => x.Email == user.Email) == 0)
                 await Users.InsertOneAsync(user);

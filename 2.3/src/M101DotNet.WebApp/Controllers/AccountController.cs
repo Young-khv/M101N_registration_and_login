@@ -34,7 +34,7 @@ namespace M101DotNet.WebApp.Controllers
             }
 
             var blogContext = new BlogContext();
-            var user = blogContext.FindUserByEmail(model.Email);
+            var user = await blogContext.FindUserByEmailAsync(model.Email);
 
             if (user == null)
             {
@@ -72,8 +72,7 @@ namespace M101DotNet.WebApp.Controllers
         {
             return View(new RegisterModel());
         }
-
-        //TODO: check that email is unique
+        
         [HttpPost]
         public async Task<ActionResult> Register(RegisterModel model)
         {
@@ -83,7 +82,7 @@ namespace M101DotNet.WebApp.Controllers
             }
 
             var blogContext = new BlogContext();
-            await blogContext.CreateNewUser(UserFromRegisterModel(model));
+            await blogContext.CreateNewUserAsync(UserFromRegisterModel(model));
 
             return RedirectToAction("Index", "Home");
         }
