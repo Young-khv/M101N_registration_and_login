@@ -34,8 +34,7 @@ namespace M101DotNet.WebApp.Controllers
             }
 
             var blogContext = new BlogContext();
-            // XXX WORK HERE
-            // fetch a user by the email in model.Email
+            var user = blogContext.FindUserByEmail(model.Email);
 
             if (user == null)
             {
@@ -74,6 +73,7 @@ namespace M101DotNet.WebApp.Controllers
             return View(new RegisterModel());
         }
 
+        //TODO: check that email is unique
         [HttpPost]
         public async Task<ActionResult> Register(RegisterModel model)
         {
@@ -83,8 +83,7 @@ namespace M101DotNet.WebApp.Controllers
             }
 
             var blogContext = new BlogContext();
-            // XXX WORK HERE
-            // create a new user and insert it into the database
+            await blogContext.CreateNewUser(UserFromRegisterModel(model));
 
             return RedirectToAction("Index", "Home");
         }
@@ -97,6 +96,20 @@ namespace M101DotNet.WebApp.Controllers
             }
 
             return returnUrl;
+        }
+
+        private User UserFromRegisterModel(RegisterModel model)
+        {
+            if (model == null)
+                return null;
+
+            var user = new User()
+            {
+                Name = model.Name,
+                Email = model.Email
+            };
+
+            return user;
         }
     }
 }

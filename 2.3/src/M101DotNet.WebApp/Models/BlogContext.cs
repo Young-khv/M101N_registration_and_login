@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace M101DotNet.WebApp.Models
@@ -36,6 +38,17 @@ namespace M101DotNet.WebApp.Models
         public IMongoCollection<User> Users
         {
             get { return _database.GetCollection<User>(USERS_COLLECTION_NAME); }
+        }
+
+        public User FindUserByEmail(string userEmail)
+        {
+            return (User)Users.Find(x => x.Email == userEmail).Limit(1);
+        }
+
+        public async Task CreateNewUser(User user)
+        {
+            if(await Users.CountAsync(x => x.Email == user.Email) == 0)
+                await Users.InsertOneAsync(user);
         }
     }
 }
